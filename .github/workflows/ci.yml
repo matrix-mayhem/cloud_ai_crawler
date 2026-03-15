@@ -23,7 +23,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "."
-          target: "/home/ubuntu/ai-crawler"
+          target: "/home/ubuntu/cloud_ai_crawler"
 
       - name: Build and deploy container
         uses: appleboy/ssh-action@v1
@@ -32,7 +32,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/ai-crawler
+            cd /home/ubuntu/cloud_ai_crawler
 
             echo "Stopping old container"
             sudo docker stop ai-crawler || true
