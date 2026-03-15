@@ -1,0 +1,45 @@
+name: Deploy AI Crawler
+
+on:
+  push:
+    branches:
+        - main
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Build docker image
+        run: |
+          docker build -t ai-crawler .
+
+      - name: Save docker image
+        run: |
+          docker save ai-crawler > ai-crawler.tar
+
+      - name: Copy image to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "ai-crawler.tar"
+          target: "/home/ubuntu"
+
+      - name: Deploy container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo docker load -i ai-crawler.tar
+            sudo docker stop ai-crawler || true
+            sudo docker rm ai-crawler || true
+            sudo docker run -d -p 5000:5000 -e AWS_DEFAULT_REGION=ap-south-1 ai-crawler ai-crawler
