@@ -40,4 +40,4 @@ jobs:
 
             echo "Building docker image"
             sudo docker build -t ai-crawler .
-            sudo docker run -d -p 5000:5000 -e AWS_DEFAULT_REGION=ap-south-1 ai-crawler ai-crawler
+            sudo docker run -d -p 5000:5000 -e AWS_DEFAULT_REGION=ap-south-1 ai-crawler
